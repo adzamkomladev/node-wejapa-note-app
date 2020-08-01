@@ -1,6 +1,6 @@
 const http = require('http');
 
-const { index, addNote } = require('./handlers');
+const { index, addNote, updateNote } = require('./handlers');
 
 const hostname = '127.0.0.1';
 const port = process.env.PORT || 3000;
@@ -13,8 +13,8 @@ const server = http.createServer((request, response) => {
         index(request, response);
     } else if (method === 'POST' && url === '/notes') {
         addNote(request, response);
-    } else if (method === 'PUT' && url === '/notes') {
-
+    } else if (method === 'PUT' && url.startsWith('/notes')) {
+        updateNote(request, response);
     } else if (method === 'DELETE' && url === '/notes') {
 
     } else {
