@@ -66,6 +66,24 @@ module.exports = {
             response.setHeader('Content-Type', 'text/plain');
             response.end('');
         });
+    },
+    deleteNote(request, response) {
+        const { url } = request;
+        const [_, __, topic, fileName] = url.split('/');
+
+        if (!topic || !fileName) {
+            invalidResponse(response, 400, 'Invalid url parameters provided!', url);
+            return;
+        }
+
+        if (!deleteFile(topic, fileName)) {
+            invalidResponse(response, 404, 'Note not found!', url);
+            return;
+        }
+
+        response.statusCode = 204;
+        response.setHeader('Content-Type', 'text/plain');
+        response.end('');
     }
 }
 
@@ -92,6 +110,21 @@ const updateFile = (topic, fileName, data) => {
 
     try {
         fs.writeFileSync(filePath, data);
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+const deleteFile = (topic, fileName) => {
+    const filePath = `./notes/${topic}/${fileName}.txt`;
+
+    if (!fs.existsSync(filePath)) {
+        return false;
+    }
+
+    try {
+        fs.unlinkSync(filePath);
         return true;
     } catch (error) {
         return false;

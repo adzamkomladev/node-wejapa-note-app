@@ -1,6 +1,6 @@
 const http = require('http');
 
-const { index, addNote, updateNote } = require('./handlers');
+const { index, addNote, updateNote, deleteNote } = require('./handlers');
 
 const hostname = '127.0.0.1';
 const port = process.env.PORT || 3000;
@@ -15,8 +15,8 @@ const server = http.createServer((request, response) => {
         addNote(request, response);
     } else if (method === 'PUT' && url.startsWith('/notes')) {
         updateNote(request, response);
-    } else if (method === 'DELETE' && url === '/notes') {
-
+    } else if (method === 'DELETE' && url.startsWith('/notes')) {
+        deleteNote(request, response);
     } else {
         response.statusCode = 404;
         response.setHeader('Content-Type', 'text/plain');
