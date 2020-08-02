@@ -1,6 +1,11 @@
 # node-wejapa-note-app
 
 
+### All notes
+
+![image](./doc/img/all_notes.png)
+
+
 ### Add a note
 
 ![image](./doc/img/add_note.png)
