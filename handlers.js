@@ -14,6 +14,28 @@ module.exports = {
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify(data));
     },
+    findNote(request, response) {
+        const { url } = request;
+        const [_, __, topic, fileName] = url.split('/');
+
+        if (!topic || !fileName) {
+            invalidResponse(response, 400, 'Invalid url parameters provided!', url);
+            return;
+        }
+
+        const note = readFile(topic, fileName);
+
+        if (!note) {
+            invalidResponse(response, 404, 'Note not found!', url);
+            return;
+        }
+
+        const data = { topic, note, name: fileName };
+
+        response.statusCode = 200;
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify(data));
+    },
     addNote(request, response) {
         let body = [];
 
@@ -93,7 +115,7 @@ module.exports = {
         response.setHeader('Content-Type', 'text/plain');
         response.end('');
     }
-}
+};
 
 const addFile = (topic, data) => {
     const directory = `./notes/${topic}`;
@@ -165,7 +187,23 @@ const readAllFiles = () => {
     });
 
     return allFiles;
-}
+};
+
+const readFile = (topic, fileName) => {
+    const filePath = `./notes/${topic}/${fileName}.txt`;
+
+    if (!fs.existsSync(filePath)) {
+        return false;
+    }
+
+    try {
+        const buffer = fs.readFileSync(filePath, { encoding: 'utf8' });
+        return buffer.toString();
+    } catch (error) {
+        return false;
+    }
+};
+
 const invalidResponse = (response, errorCode, message, data = '') => {
     response.statusCode = errorCode;
     response.setHeader('Content-Type', 'text/plain');
